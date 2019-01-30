@@ -11,14 +11,14 @@ module.exports = {
   scope: '',      // image scope inside repository (optional)
   name: '',       // image name
   tag: {          // optional (default below)
-    predicate: tag => /^([\w\d.]+)$/i.test(tag),  // method checking if tag is ok to use as docker image tag
-    format: tag => tag                            // method formatting tag to desired format
+    predicate: tag => /^([\w\d.+\-]+)$/i.test(tag),         // method checking if tag is ok to use as docker image tag
+    format: tag => tag.replace('+', '_')                    // method formatting tag to desired format
   },
   branch: {       // optional (default below)
-    predicate: branch => /^([\w\d.\/]+)$/i.test(branch),  // method checking if branch name is ok to use as docker image tag
-    format: branch => branch.replace('/', '_')            // method formatting branch name to desired format
+    predicate: branch => /^([\w\d.\/\-]+)$/i.test(branch),  // method checking if branch name is ok to use as docker image tag
+    format: branch => branch.replace('/', '_')              // method formatting branch name to desired format
   },
-  arguments: revision => [] // method feeding build args to image build based on git revision (optional)
+  arguments: ({ tag, branch, commit }) => []  // method feeding build args to image build based on git revision (optional, should return String[])
 };
 ```
 
