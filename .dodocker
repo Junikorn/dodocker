@@ -3,11 +3,11 @@ module.exports = {
   scope: '',
   name: '',
   tag: {
-    predicate: tag => /^([\w\d.]+)$/i.test(tag),
-    format: tag => tag
+    predicate: tag => tag && /^([\w\d.+\-]+)$/i.test(tag),
+    format: tag => tag.replace('+', '_')
   },
   branch: {
-    predicate: branch => /^([\w\d.\/]+)$/i.test(branch),
+    predicate: branch => branch && /^([\w\d.\/\-]+)$/i.test(branch),
     format: branch => branch.replace('/', '_')
   },
   arguments: revision => []
