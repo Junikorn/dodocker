@@ -1,6 +1,6 @@
 {
   "name": "dodocker",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "docker image build orchestrator with automatic tagging",
   "main": "cli.js",
   "dependencies": {
