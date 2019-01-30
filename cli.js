@@ -72,12 +72,13 @@ function getConfig(file){
 
 function getBuildTag(config, tag){
   const tagComposer = [];
-  tagComposer.push(config.repository);
-  if(config.scope){
-    tagComposer.push('/' + config.scope);
+  if(config.repository){
+    tagComposer.push(config.repository + '/');
   }
-  tagComposer.push('/' + config.name);
-  tagComposer.push(':' + tag);
+  if(config.scope){
+    tagComposer.push(config.scope + '/');
+  }
+  tagComposer.push(config.name + ':' + tag);
   return tagComposer.join('');
 }
 
@@ -106,9 +107,7 @@ function runNext(queue){
   const cfg = queue.shift();
   if(cfg){
     logCommand(cfg);
-    return spawn(cfg, true).then(() => runNext(queue), err => {
-      throw err
-    });
+    return spawn(cfg, true).then(() => runNext(queue));
   }else{
     return Promise.resolve(true);
   }
@@ -122,6 +121,7 @@ program
   .option('-p, --push', 'Push image to repository')
   .option('-l, --latest', 'Push as latest')
   .option('-r, --repository [repository]', 'Docker repository')
+  .option('-s, --scope [scope]', 'Docker image scope')
   .option('-n, --image-name [image-name]', 'Docker image name')
   .parse(process.argv);
 
@@ -131,8 +131,15 @@ Promise.all([
 ]).then(resolutions => {
   const config = resolutions[0];
   config.repository = program.repository || config.repository;
+  config.scope = program.scope || config.scope;
   config.name = program.imageName || config.name;
+  if(!config.name){
+    throw Error('DoDocker requires image name (-n, --image-name or .dodocker name)');
+  }
   const revision = config.revision = resolutions[1];
+  if(!revision.commit){
+    throw Error('DoDocker should be run inside initialized Git repository');
+  }
   const revisionTag = config.tag && config.tag.predicate(revision.tag) && config.tag.format(revision.tag) ||
     config.branch && config.branch.predicate(revision.branch) && config.branch.format(revision.branch) ||
     revision.commit;
@@ -146,6 +153,11 @@ Promise.all([
     queue.push({ cmd: 'docker', args: ['tag', build.tag, latestTag]});
     queue.push({ cmd: 'docker', args: ['push', latestTag] });
   }
-  runNext(queue).then(() => process.exit(0));
+  return runNext(queue).then(() => process.exit(0));
+}).catch(err => {
+  console.error(err);
+  if(err.stack){
+    console.error(err.stack);
+  }
+  process.exit(1);
 });
-
