@@ -1,5 +1,9 @@
 # DoDocker Changelog
 
+## 0.2.2
+
+* Fix README & CHANGELOG format [4161fb1](https://github.com/Junikorn/dodocker/commit/4161fb17fac91d6e6841e90e02a3f87060374728)
+
 ## 0.2.1
 
 * Fix version logging [749f9a8](https://github.com/Junikorn/dodocker/commit/749f9a8d29feefb890dd6c419c35755c3c7a775a)
