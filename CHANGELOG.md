@@ -1,8 +1,9 @@
 # DoDocker Changelog
 
-## Unreleased
+## 0.3.0
 
-* []()
+* [cbfc1ad](https://github.com/Junikorn/dodocker/commit/cbfc1ad36c59597e36221b517f4818f939647da4)
+  Docker tag logic improvements
   - Changed tag/branch predicate/format to match semversion
   - Changed CHANGELOG format
   - Added usage examples
