@@ -1,0 +1,14 @@
+module.exports = {
+  repository: '',
+  scope: '',
+  name: '',
+  tag: {
+    predicate: tag => /^([\w\d.]+)$/i.test(tag),
+    format: tag => tag
+  },
+  branch: {
+    predicate: branch => /^([\w\d.\/]+)$/i.test(branch),
+    format: branch => branch.replace('/', '_')
+  },
+  arguments: revision => []
+};
