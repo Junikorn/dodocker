@@ -5,6 +5,12 @@
 * []()
   - Changed tag/branch predicate/format to match semversion
   - Changed CHANGELOG format
+  - Added usage examples
+  - Added ```--scope``` option
+  - Fixed default predicates for empty values
+  - Fixed default repository operations
+  - Added errors
+  - Added error catch
 
 ## 0.2.2
 
