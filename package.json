@@ -1,6 +1,6 @@
 {
   "name": "dodocker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "docker image build orchestrator with automatic tagging",
   "main": "cli.js",
   "dependencies": {
@@ -8,8 +8,8 @@
   },
   "devDependencies": {},
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Junikorn/dodocker.git"
+    "type": "git",
+    "url": "https://github.com/Junikorn/dodocker.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
