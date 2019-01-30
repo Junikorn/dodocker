@@ -142,9 +142,9 @@ Promise.all([
     queue.push({ cmd: 'docker', args: ['push', build.tag] });
   }
   if(program.latest){
-    const latest = getBuildTag(config, 'latest');
-    queue.push({ cmd: 'docker', args: ['tag', build.tag, latest]});
-    queue.push({ cmd: 'docker', args: ['push', latest] });
+    const latestTag = getBuildTag(config, 'latest');
+    queue.push({ cmd: 'docker', args: ['tag', build.tag, latestTag]});
+    queue.push({ cmd: 'docker', args: ['push', latestTag] });
   }
   runNext(queue).then(() => process.exit(0));
 });
