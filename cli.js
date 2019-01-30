@@ -81,11 +81,34 @@ function getBuildTag(config, tag){
   return tagComposer.join('');
 }
 
+function getBuildCfg(config, tag){
+  const buildTag = getBuildTag(config, tag);
+  const buildArgs = config.arguments && config.arguments(config.revision);
+  const args = [
+    'build',
+    '--tag', buildTag
+  ];
+  if(buildArgs){
+    buildArgs.forEach(arg => {
+      args.push('--build-arg');
+      args.push(arg);
+    });
+  }
+  args.push('.');
+  return { cmd: 'docker', args, tag: buildTag };
+}
+
+function logCommand(cfg){
+  console.log(new Date().toISOString() + ' -> Executing: ' + cfg.cmd + ' ' + cfg.args.join(' '));
+}
+
 function runNext(queue){
-  const cfg = queue.pop();
+  const cfg = queue.shift();
   if(cfg){
-    console.log(new Date().toISOString() + ' -> Executing: ' + cfg);
-    return spawn(cfg, true).then(() => runNext(queue));
+    logCommand(cfg);
+    return spawn(cfg, true).then(() => runNext(queue), err => {
+      throw err
+    });
   }else{
     return Promise.resolve(true);
   }
@@ -109,33 +132,20 @@ Promise.all([
   const config = resolutions[0];
   config.repository = program.repository || config.repository;
   config.name = program.imageName || config.name;
-  const revision = resolutions[1];
-  const tag = config.tag && config.tag.predicate(revision.tag) && config.tag.format(revision.tag) ||
+  const revision = config.revision = resolutions[1];
+  const revisionTag = config.tag && config.tag.predicate(revision.tag) && config.tag.format(revision.tag) ||
     config.branch && config.branch.predicate(revision.branch) && config.branch.format(revision.branch) ||
     revision.commit;
-  const buildTag = getBuildTag(config, tag);
-  const buildArgs = config.arguments && config.arguments(revision);
-  const args = [
-    'build',
-    '--tag', buildTag
-  ];
-  if(buildArgs){
-    buildArgs.forEach(arg => {
-      args.push('--build-arg');
-      args.push(arg);
-    });
+  const build = getBuildCfg(config, revisionTag);
+  const queue = [build];
+  if(program.push){
+    queue.push({ cmd: 'docker', args: ['push', build.tag] });
   }
-  args.push('.');
-  console.log(new Date().toUTCString() + ' -> Building docker image: ' + buildTag);
-  spawn({ cmd: 'docker', args }, true).then(() => {
-    const queue = [];
-    if(program.push){
-      queue.push({ cmd: 'docker', args: ['push', buildTag] });
-    }
-    if(program.latest){
-      queue.push({ cmd: 'docker', args: ['push', buildTag.replace(tag, 'latest')] });
-    }
-    runNext(queue).then(() => process.exit(0));
-  });
+  if(program.latest){
+    const latest = getBuildTag(config, 'latest');
+    queue.push({ cmd: 'docker', args: ['tag', build.tag, latest]});
+    queue.push({ cmd: 'docker', args: ['push', latest] });
+  }
+  runNext(queue).then(() => process.exit(0));
 });
 
