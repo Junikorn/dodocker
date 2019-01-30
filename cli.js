@@ -117,7 +117,7 @@ function runNext(queue){
 const program = require('commander');
 
 program
-  .version('0.1.0')
+  .version(require('./package').version)
   .option('-c, --config', 'Path to config file (if different than .dodocker)')
   .option('-p, --push', 'Push image to repository')
   .option('-l, --latest', 'Push as latest')
