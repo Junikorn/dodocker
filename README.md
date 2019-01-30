@@ -1,4 +1,4 @@
-#DoDocker
+# DoDocker
 
 CLI tool helper for fast image building with tags based on git revision.
 If you wish to push to private repository you need to run ```docker login <REPOSITORY>``` before using DoDocker.
@@ -22,10 +22,12 @@ module.exports = {
 };
 ```
 
-##Changelog
+## Changelog
+
 Changelog is available [here](./CHANGELOG.md).
 
-##License
+## License
+
 The MIT License (MIT)
 
 > Copyright (c) 2019 Błażej Wolańczyk
