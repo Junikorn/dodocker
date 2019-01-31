@@ -123,6 +123,9 @@ program
   .option('-r, --repository [repository]', 'Docker repository')
   .option('-s, --scope [scope]', 'Docker image scope')
   .option('-n, --image-name [image-name]', 'Docker image name')
+  .option('-R, --run', 'Run Docker image in container (detached mode)')
+  .option('-P, --port [port]', 'Expose container port')
+  .option('-N, --container-name [container-name]', 'Container name')
   .parse(process.argv);
 
 Promise.all([
@@ -133,6 +136,8 @@ Promise.all([
   config.repository = program.repository || config.repository;
   config.scope = program.scope || config.scope;
   config.name = program.imageName || config.name;
+  config.port = program.port || config.port;
+  config.container = program.containerName || config.container;
   if(!config.name){
     throw Error('DoDocker requires image name (-n, --image-name or .dodocker name)');
   }
@@ -152,6 +157,17 @@ Promise.all([
     const latestTag = getBuildTag(config, 'latest');
     queue.push({ cmd: 'docker', args: ['tag', build.tag, latestTag]});
     queue.push({ cmd: 'docker', args: ['push', latestTag] });
+  }
+  if(program.run){
+    const runArgs = ['run', '-d'];
+    if(config.port){
+      runArgs.push('-p', config.port);
+    }
+    if(config.container){
+      runArgs.push('--name', config.container);
+    }
+    runArgs.push(build.tag);
+    queue.push({ cmd: 'docker', args: runArgs });
   }
   return runNext(queue).then(() => process.exit(0));
 }).catch(err => {
