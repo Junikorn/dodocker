@@ -3,7 +3,10 @@
 ## Unreleased
 
 * []()
-  Added image running (-R -P -N options)
+  Image running
+  - Added image running (-R -P -N -F options)
+  - Fixed advanced usage example in README
+  - Run code autoformatting
 
 ## 0.3.0
 

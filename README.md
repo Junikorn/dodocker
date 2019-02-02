@@ -16,6 +16,7 @@ If you wish to push to repository you need to run ```docker login <REPOSITORY>``
   -R, --run                              Run Docker image in container (detached mode)
   -P, --port [port]                      Expose container port
   -N, --container-name [container-name]  Container name
+  -F, --force                            Delete already running instance of container if required
   -h, --help                             output usage information
 ```
 
@@ -71,20 +72,27 @@ module.exports = {
 ```
 # git revision master #2.0.0
 $ dodocker -pl
-ISOTIME -> Executing: docker image build --build-arg REVISION=2.0.0 -tag docker.eg.com/project/component:2.0.0        # always executed (--build-arg from .dodocker arguments)
-ISOTIME -> Executing: docker image push docker.eg.com/project/component:2.0.0        # from -p
-ISOTIME -> Executing: docker image tag docker.eg.com/project/component:2.0.0 docker.eg.com/project/component:latest   # from -l
-ISOTIME -> Executing: docker image push docker.eg.com/project/component:latest       # from -l
+ISOTIME -> Executing: docker build --build-arg REVISION=2.0.0 -tag docker.eg.com/project/component:2.0.0        # always executed (--build-arg from .dodocker arguments)
+ISOTIME -> Executing: docker push docker.eg.com/project/component:2.0.0        # from -p
+ISOTIME -> Executing: docker tag docker.eg.com/project/component:2.0.0 docker.eg.com/project/component:latest   # from -l
+ISOTIME -> Executing: docker push docker.eg.com/project/component:latest       # from -l
 $ dodocker -n test1 -r repo.io -s tests
-ISOTIME -> Executing: docker image build --build-arg REVISION=2.0.0 -tag repo.io/tests/test1:2.0.0 
+ISOTIME -> Executing: docker build --build-arg REVISION=2.0.0 -tag repo.io/tests/test1:2.0.0 
 $ dodocker -R
-ISOTIME -> Executing: docker image build --build-arg REVISION=2.0.0 -tag docker.eg.com/project/component:2.0.0
-ISOTIME -> Executing: docker image run -p 8080:80 --name component docker.eg.com/project/component:2.0.0
-<IMAGE HASH>
+ISOTIME -> Executing: docker build --build-arg REVISION=2.0.0 -tag docker.eg.com/project/component:2.0.0
+ISOTIME -> Executing: docker run -p 8080:80 --name component docker.eg.com/project/component:2.0.0
+<CONTAINER HASH>
 $ dodocker -R -P 80:80 -N test
-ISOTIME -> Executing: docker image build --build-arg REVISION=2.0.0 -tag docker.eg.com/project/component:2.0.0
-ISOTIME -> Executing: docker image run -p 80:80 --name test docker.eg.com/project/component:2.0.0
-<IMAGE HASH>
+ISOTIME -> Executing: docker build --build-arg REVISION=2.0.0 -tag docker.eg.com/project/component:2.0.0
+ISOTIME -> Executing: docker run -p 80:80 --name test docker.eg.com/project/component:2.0.0
+<CONTAINER HASH>
+$ dodocker -R -P 80:80 -N test -F
+ISOTIME -> Executing: docker build --build-arg REVISION=2.0.0 -tag docker.eg.com/project/component:2.0.0
+ISOTIME -> Executing: docker ps --format "{{json .}}" -f name=test
+ISOTIME -> Executing: docker container rm -f <RUNNING CONTAINER HASH>
+<REMOVED CONTAINER HASH>
+ISOTIME -> Executing: docker run -d -p 80:80 --name test docker.eg.com/project/component:2.0.0
+<CONTAINER HASH>
 ```
 
 ## Changelog
