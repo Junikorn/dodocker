@@ -1,5 +1,13 @@
 # DoDocker Changelog
 
+## Unreleased
+
+* []()
+  Image running
+  - Added image running (-R -P -N -F options)
+  - Fixed advanced usage example in README
+  - Run code autoformatting
+
 ## 0.3.0
 
 * [cbfc1ad](https://github.com/Junikorn/dodocker/commit/cbfc1ad36c59597e36221b517f4818f939647da4)
