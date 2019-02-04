@@ -1,7 +1,12 @@
 module.exports = {
+  // image props
   repository: '',
   scope: '',
   name: '',
+  // container props
+  container: '',
+  port: '',
+  // git tag -> docker tag
   tag: {
     predicate: tag => tag && /^([\w\d.+\-]+)$/i.test(tag),
     format: tag => tag.replace('+', '_')
@@ -10,5 +15,6 @@ module.exports = {
     predicate: branch => branch && /^([\w\d.\/\-]+)$/i.test(branch),
     format: branch => branch.replace('/', '_')
   },
+  // build-arg passing
   arguments: revision => []
 };
